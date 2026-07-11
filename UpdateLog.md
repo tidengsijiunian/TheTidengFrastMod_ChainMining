@@ -4,6 +4,15 @@
 
 ---
 
+## v1.5.23
+
+**Bug 修复：**
+
+- 修复启动闪退：mixins.json 仍引用已删除的 ExampleMixin，导致 Mixin 加载失败
+- mixins.json 清空为无 Mixin 的空数组
+
+---
+
 ## v1.5.22
 
 **代码优化：**
