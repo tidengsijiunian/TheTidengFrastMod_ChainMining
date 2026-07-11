@@ -1,0 +1,42 @@
+name: release
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'gradle.properties'
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+
+      - name: setup jdk
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'microsoft'
+
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: build
+        run: ./gradlew build
+
+      - name: extract version
+        run: |
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          echo "version=$VERSION" >> $GITHUB_ENV
+
+      - name: create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ env.version }}
+          tag_name: v${{ env.version }}
+          files: build/libs/*.jar
+          body_path: UpdateLog.md
+          draft: false
+          prerelease: false
